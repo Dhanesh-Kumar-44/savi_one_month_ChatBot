@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Chatbot{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>Chat with Savvy</h2>
+    {% if error %}
+        <ul class="error">
+            {% for err in error %}
+                <li>{{ err['loc'][0] }}: {{ err['msg'] }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <div class="chat-display" id="chat-display">
+        {% for chat in chat_history %}
+        <p><strong>You:</strong> {{ chat.user }}</p>
+        <p><strong>Bot:</strong> {{ chat.bot }} </p>
+
+        {% endfor %}
+    </div>
+    <form id="chat-form" method="post" action="/chat/">
+        <div class="form-group">
+            <input type="text" id="user-message" name="message" placeholder="Type your message...">
+        </div>
+        <button type="submit" class="btn">Send</button>
+         <label for="module-selection">Select Module:</label>
+            <select id="module-selection" name="module">
+                <option value="custom">Custom Module</option>
+                <option value="chatgpt">ChatGPT</option>
+            </select>
+    </form>
+</div>
+
+{% endblock %}
+
+<!--{% block scripts %}-->
+<!--<script src="/static/app5.js"></script>-->
+<!--{% endblock %}-->
