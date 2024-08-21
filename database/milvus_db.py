@@ -1,36 +1,17 @@
 from pymilvus import connections, FieldSchema, CollectionSchema, DataType, Collection
 from sentence_transformers import SentenceTransformer
+import os
+from dotenv import load_dotenv
 
-# Configuration
-MILVUS_HOST = 'localhost'
-MILVUS_PORT = '19530'
-OPENAI_API_KEY = 'provide openAI key here'
-MODEL_NAME = 'all-MiniLM-L6-v2'
-COLLECTION_NAME = 'testing_products'
+load_dotenv()
 
 # Connect to Milvus
-conn_milvus = connections.connect(host=MILVUS_HOST, port=MILVUS_PORT)
+conn_milvus = connections.connect(host=os.getenv("MILVUS_HOST"), port=os.getenv("MILVUS_PORT"))
 # Get the existing collection
-collection_milvus = Collection(name=COLLECTION_NAME)
+collection_milvus = Collection(name=os.getenv("COLLECTION_NAME"))
 
 # Initialize the sentence transformer model
-model = SentenceTransformer(MODEL_NAME)
-
-
-def create_schema(collection_name):
-    # COLLECTION_NAME = 'testing_products'
-    # Define the schema for Milvus collection
-    fields = [
-        FieldSchema(name="id", dtype=DataType.INT64, is_primary=True),
-        FieldSchema(name="brand", dtype=DataType.VARCHAR, max_length=255),
-        FieldSchema(name="category", dtype=DataType.VARCHAR, max_length=255),
-        FieldSchema(name="description", dtype=DataType.VARCHAR, max_length=255),
-        FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=384)
-    ]
-    schema = CollectionSchema(fields, "Deals collection schema for testing database")
-    collection = Collection(COLLECTION_NAME, schema)
-    return collection
-
+model = SentenceTransformer(os.getenv("MODEL_NAME"))
 
 def text_to_vector(description):
     return model.encode(description).tolist()
